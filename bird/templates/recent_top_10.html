@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Top 10s</title>
+    <style>
+        body {
+            background-color: #f8fff1;
+            font-family: sans-serif;
+        }
+
+        h1, th, td {
+            text-align: left;
+            padding: 0.2em 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Recent Top 10s</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Level</th>
+                <th>Time</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for replay in replays %}
+                <tr>
+                    <td>{{ replay.rank }}</td>
+                    <td>{{ replay.player }}</td>
+                    <td>{{ replay.level }}</td>
+                    <td>{{ replay.time }}</td>
+                    <td>{{ replay.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
