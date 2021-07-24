@@ -8,7 +8,7 @@ from bird.queries import RECENT_TOP_10
 
 
 @app.route("/")
-def index():
+def recent_top_10():
     c = get_db_cursor()
     c.execute(RECENT_TOP_10)
     replays = []

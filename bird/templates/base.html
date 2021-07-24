@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TasBird{% endblock %}</title>
+    <style>
+        body {
+            background-color: #f8fff1;
+            font-family: sans-serif;
+        }
+
+        h1, th, td {
+            text-align: left;
+            padding: 0.2em 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ self.title() }}</h1>
+    {% block content %}{% endblock %}
+</body>
+</html>
