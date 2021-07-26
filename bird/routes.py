@@ -1,10 +1,10 @@
 import time
 
-from flask import render_template
+from flask import render_template, abort
 
 from bird import app
 from bird.db import get_db_cursor
-from bird.queries import RECENT_TOP_10
+from bird.queries import RECENT_TOP_10, LEVEL_TOP_50, LEVEL_NAME
 
 
 @app.route("/")
@@ -22,6 +22,30 @@ def recent_top_10():
             "date": format_timestamp(timestamp, now)
         })
     return render_template("recent_top_10.html", replays=replays)
+
+
+@app.route("/level/<level_id>")
+def level_leaderboard(level_id):
+    c = get_db_cursor()
+
+    c.execute(LEVEL_NAME, (level_id,))
+    response = c.fetchone()
+    if response is None:
+        return abort(404)
+    level_name = response[0]
+
+    c.execute(LEVEL_TOP_50, (level_id,))
+    replays = []
+    now = time.time()
+    for rank, player, frame_count, timestamp in c.fetchall():
+        replays.append({
+            "rank": rank,
+            "player": player,
+            "time": format_frame_count(frame_count),
+            "date": format_timestamp(timestamp, now)
+        })
+
+    return render_template("level_leaderboard.html", level=level_name, replays=replays)
 
 
 def format_frame_count(frame_count):
