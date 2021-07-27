@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Hubs
+{% endblock %}
+
+{% macro render_levels(levels) %}
+    <ul>
+        {% for level_id, level_name in levels %}
+            <li><a href="/level/{{ level_id }}">{{ level_name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
+{% block content %}
+    <div>
+        {% for hub, sub_hubs in hubs.items() %}
+            <h2>{{ hub }}</h2>
+            <div>
+                {% if sub_hubs is mapping %}
+                    {% for sub_hub, levels in sub_hubs.items() %}
+                        <div>
+                            <h3>{{ sub_hub }}</h3>
+                            {{ render_levels(levels) }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {{ render_levels(sub_hubs) }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

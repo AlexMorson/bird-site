@@ -4,7 +4,7 @@ from flask import render_template, abort
 
 from bird import app
 from bird.db import get_db_cursor
-from bird.levels import LEVELS
+from bird.levels import LEVELS, HUBS
 from bird.queries import RECENT_TOP_10, LEVEL_TOP_50
 
 
@@ -23,6 +23,11 @@ def recent_top_10():
             "date": format_timestamp(timestamp, now)
         })
     return render_template("recent_top_10.html", replays=replays)
+
+
+@app.route("/hubs")
+def hubs():
+    return render_template("hubs.html", hubs=HUBS)
 
 
 @app.route("/level/<int:level_id>")
