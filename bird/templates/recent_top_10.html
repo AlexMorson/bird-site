@@ -5,26 +5,28 @@
 {% endblock %}
 
 {% block content %}
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Player</th>
-                <th>Level</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for replay in replays %}
+    <div>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ replay.rank }}</td>
-                    <td>{{ replay.player }}</td>
-                    <td>{{ replay.level }}</td>
-                    <td>{{ replay.time }}</td>
-                    <td>{{ replay.date }}</td>
+                    <th class="rank">#</th>
+                    <th>Player</th>
+                    <th>Level</th>
+                    <th>Time</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for replay in replays %}
+                    <tr>
+                        <td class="rank">{{ replay.rank }}</td>
+                        <td>{{ replay.player }}</td>
+                        <td>{{ replay.level }}</td>
+                        <td>{{ replay.time }}</td>
+                        <td>{{ replay.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -4,7 +4,8 @@ from flask import render_template, abort
 
 from bird import app
 from bird.db import get_db_cursor
-from bird.queries import RECENT_TOP_10, LEVEL_TOP_50, LEVEL_NAME
+from bird.levels import LEVELS
+from bird.queries import RECENT_TOP_10, LEVEL_TOP_50
 
 
 @app.route("/")
@@ -24,16 +25,29 @@ def recent_top_10():
     return render_template("recent_top_10.html", replays=replays)
 
 
-@app.route("/level/<level_id>")
+@app.route("/level/<int:level_id>")
 def level_leaderboard(level_id):
-    c = get_db_cursor()
-
-    c.execute(LEVEL_NAME, (level_id,))
-    response = c.fetchone()
-    if response is None:
+    if level_id not in LEVELS:
         return abort(404)
-    level_name = response[0]
+    level_name = LEVELS[level_id].split(" - ")[0]
 
+    # Even numbers are the best-time leaderboards
+    best_time_id = 2 * (level_id // 2)
+    all_birds_id = best_time_id + 1
+
+    best_time_replays = fetch_level_top_50(best_time_id)
+    all_birds_replays = fetch_level_top_50(all_birds_id)
+
+    replays = {
+        "best_time": best_time_replays,
+        "all_birds": all_birds_replays,
+    }
+
+    return render_template("level_leaderboard.html", level=level_name, replays=replays)
+
+
+def fetch_level_top_50(level_id):
+    c = get_db_cursor()
     c.execute(LEVEL_TOP_50, (level_id,))
     replays = []
     now = time.time()
@@ -44,8 +58,7 @@ def level_leaderboard(level_id):
             "time": format_frame_count(frame_count),
             "date": format_timestamp(timestamp, now)
         })
-
-    return render_template("level_leaderboard.html", level=level_name, replays=replays)
+    return replays
 
 
 def format_frame_count(frame_count):

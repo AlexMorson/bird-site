@@ -5,24 +5,50 @@
 {% endblock %}
 
 {% block content %}
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Player</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for replay in replays %}
+    <div>
+        <h2>Best Time</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ replay.rank }}</td>
-                    <td>{{ replay.player }}</td>
-                    <td>{{ replay.time }}</td>
-                    <td>{{ replay.date }}</td>
+                    <th class="rank">#</th>
+                    <th>Player</th>
+                    <th>Time</th>
+                    <th>Date</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for replay in replays.best_time %}
+                    <tr>
+                        <td class="rank">{{ replay.rank }}</td>
+                        <td>{{ replay.player }}</td>
+                        <td>{{ replay.time }}</td>
+                        <td>{{ replay.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h2>All Birds</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th>Player</th>
+                    <th>Time</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for replay in replays.all_birds %}
+                    <tr>
+                        <td class="rank">{{ replay.rank }}</td>
+                        <td>{{ replay.player }}</td>
+                        <td>{{ replay.time }}</td>
+                        <td>{{ replay.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

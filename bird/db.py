@@ -6,17 +6,22 @@ from bird import app
 
 
 def get_db():
-    if "db" not in g:
-        g.db = sqlite3.connect("leaderboards.sqlite")
-    return g.db
+    if "conn" not in g:
+        g.conn = sqlite3.connect("leaderboards.sqlite")
+    return g.conn
 
 
 def get_db_cursor():
-    db = get_db()
-    return db.cursor()
+    if "c" not in g:
+        g.c = get_db().cursor()
+    return g.c
 
 
 @app.teardown_appcontext
 def close_db(exception):
-    if "db" in g:
-        g.db.close()
+    if "c" in g:
+        g.c.close()
+        del g.c
+    if "conn" in g:
+        g.conn.close()
+        del g.conn
