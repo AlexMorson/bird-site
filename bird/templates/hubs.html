@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import render_level %}
 
 {% block title %}
     Hubs
@@ -6,8 +7,8 @@
 
 {% macro render_levels(levels) %}
     <ul>
-        {% for level_id, level_name in levels %}
-            <li><a href="/level/{{ level_id }}">{{ level_name }}</a></li>
+        {% for level in levels %}
+            <li>{{ render_level(level) }}</li>
         {% endfor %}
     </ul>
 {% endmacro %}

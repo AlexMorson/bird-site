@@ -49,12 +49,11 @@ SELECT * FROM (
             PARTITION BY r.level_id
             ORDER BY r.frame_count) as rank,
         u.name as user_name,
-        l.name as level_name,
+        r.level_id,
         r.frame_count,
         r.timestamp
     FROM Users as u
     JOIN PersonalBests as r ON r.user_id = u.id
-    JOIN Levels as l ON l.id = r.level_id
     ORDER BY r.timestamp DESC
 )
 WHERE timestamp > strftime('%s', 'now') - 60 * 60 * 24 * 7

@@ -14,11 +14,11 @@ def recent_top_10():
     c.execute(RECENT_TOP_10)
     replays = []
     now = time.time()
-    for rank, player, level, frame_count, timestamp in c.fetchall():
+    for rank, player, level_id, frame_count, timestamp in c.fetchall():
         replays.append({
             "rank": rank,
             "player": player,
-            "level": level,
+            "level": (level_id, LEVELS[level_id]),
             "time": format_frame_count(frame_count),
             "date": format_timestamp(timestamp, now)
         })
