@@ -6,7 +6,7 @@ from urllib.parse import unquote
 
 from bird import gamejolt
 from bird.levels import LEVELS
-from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY
+from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY, UPDATE_PERSONAL_BESTS
 
 
 class LeaderboardReader(threading.Thread):
@@ -17,12 +17,13 @@ class LeaderboardReader(threading.Thread):
         self.c = None
 
     def run(self):
-        self.conn = sqlite3.connect("leaderboards.sqlite")
-        self.c = self.conn.cursor()
         self._init_database()
         self._update_every_hour()
 
     def _init_database(self):
+        self.conn = sqlite3.connect("leaderboards.sqlite")
+        self.c = self.conn.cursor()
+
         self.c.executescript(CREATE_TABLES)
         self.c.executemany(INSERT_LEVEL, LEVELS.items())
         self.conn.commit()
@@ -74,4 +75,5 @@ class LeaderboardReader(threading.Thread):
                 replays.append((level_id, user_id, timestamp, frame_count, replay))
         self.c.executemany(INSERT_USER, users)
         self.c.executemany(INSERT_REPLAY, replays)
+        self.c.execute(UPDATE_PERSONAL_BESTS)
         self.conn.commit()
