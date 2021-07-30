@@ -1,33 +1,31 @@
 {% extends "base.html" %}
 {% from "macros.html" import render_level %}
 
-{% block title %}
-    Recent Top 10s
-{% endblock %}
+{% block id %}recent-top-10{% endblock %}
+
+{% block title %}Recent Top 10s{% endblock %}
 
 {% block content %}
-    <div>
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Level</th>
+                <th>Time</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for replay in replays %}
                 <tr>
-                    <th class="rank">#</th>
-                    <th>Player</th>
-                    <th>Level</th>
-                    <th>Time</th>
-                    <th>Date</th>
+                    <td data-label="Rank">{{ replay.rank }}</td>
+                    <td data-label="Player">{{ replay.player }}</td>
+                    <td data-label="Level">{{ render_level(replay.level) }}</td>
+                    <td data-label="Time">{{ replay.time }}</td>
+                    <td data-label="Date">{{ replay.date }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for replay in replays %}
-                    <tr>
-                        <td class="rank">{{ replay.rank }}</td>
-                        <td>{{ replay.player }}</td>
-                        <td>{{ render_level(replay.level) }}</td>
-                        <td>{{ replay.time }}</td>
-                        <td>{{ replay.date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -4,35 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TasBird{% endblock %}</title>
-    <style>
-        body {
-            background-color: #f8fff1;
-            font-family: sans-serif;
-        }
-
-        div {
-            display: inline-block;
-            vertical-align: top;
-            padding: 0 1em;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        h1, th, td {
-            text-align: left;
-            padding: 0.2em 1em;
-        }
-
-        .rank {
-            text-align: center;
-            padding: 0.2em 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body id="{% block id %}{% endblock %}">
     <h1>{{ self.title() }}</h1>
     {% block content %}{% endblock %}
 </body>

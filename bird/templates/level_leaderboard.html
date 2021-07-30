@@ -1,54 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %}
-    {{ level }}
-{% endblock %}
+{% block id %}level{% endblock %}
+
+{% block title %}{{ level }}{% endblock %}
+
+{% macro render_leaderboard(replays) %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Time</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for replay in replays %}
+                <tr>
+                    <td data-label="Rank">{{ replay.rank }}</td>
+                    <td data-label="Player">{{ replay.player }}</td>
+                    <td data-label="Time">{{ replay.time }}</td>
+                    <td data-label="Date">{{ replay.date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
 
 {% block content %}
-    <div>
-        <h2>Best Time</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Player</th>
-                    <th>Time</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for replay in replays.best_time %}
-                    <tr>
-                        <td class="rank">{{ replay.rank }}</td>
-                        <td>{{ replay.player }}</td>
-                        <td>{{ replay.time }}</td>
-                        <td>{{ replay.date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div>
-        <h2>All Birds</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th class="rank">#</th>
-                    <th>Player</th>
-                    <th>Time</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for replay in replays.all_birds %}
-                    <tr>
-                        <td class="rank">{{ replay.rank }}</td>
-                        <td>{{ replay.player }}</td>
-                        <td>{{ replay.time }}</td>
-                        <td>{{ replay.date }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="wrap collapse-left">
+        <div>
+            <h2 class="collapse-top">Best Time</h2>
+            {{ render_leaderboard(replays.best_time) }}
+        </div>
+        <div>
+            <h2 class="collapse-top">All Birds</h2>
+            {{ render_leaderboard(replays.all_birds) }}
+        </div>
     </div>
 {% endblock %}

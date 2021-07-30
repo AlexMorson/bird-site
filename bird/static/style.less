@@ -1,0 +1,89 @@
+@background: #f8fff1;
+
+body {
+  background-color: @background;
+  font-family: sans-serif;
+  margin: 0;
+}
+
+div {
+  vertical-align: top;
+  padding: 0;
+}
+
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2em;
+  margin-left: 2em;
+}
+
+.collapse-top {
+  margin-top: 0;
+}
+
+.collapse-left {
+  margin-left: 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2 {
+  margin: 1em;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 0.4em;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 1em 0.4em;
+  margin: -0.4em 0;
+}
+
+thead {
+  text-align: left;
+}
+
+@transpose-table: {
+  table {
+    border-spacing: 0 1em;
+    margin-top: -1em;
+  }
+
+  thead {
+    display: none;
+  }
+
+  td {
+    display: block;
+    padding: 0.1em 1em;
+  }
+
+  td:before {
+    content: attr(data-label);
+    display: inline-block;
+    width: 3em;
+    padding-right: 1em;
+    text-align: right;
+    font-weight: bold;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  #recent-top-10 {
+    @transpose-table();
+  }
+}
+
+@media screen and (max-width: 960px) {
+  #level {
+    @transpose-table();
+  }
+}
