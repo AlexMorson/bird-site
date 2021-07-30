@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body id="{% block id %}{% endblock %}">
+    <nav>
+        <a href="/">Recent Top 10s</a><a href="/hubs">Hubs</a>
+    </nav>
     <h1>{{ self.title() }}</h1>
     {% block content %}{% endblock %}
 </body>
