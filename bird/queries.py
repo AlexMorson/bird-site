@@ -37,7 +37,7 @@ SELECT r.*
 FROM Replays r
 JOIN (
     SELECT r.level_id, r.user_id, max(r.timestamp) AS timestamp
-    FROM Replays as r
+    FROM Replays AS r
     GROUP BY r.level_id, r.user_id
 ) AS r2 ON r2.level_id = r.level_id AND r2.user_id = r.user_id AND r2.timestamp = r.timestamp;
 """
@@ -47,21 +47,22 @@ SELECT * FROM (
     SELECT
         rank() OVER (
             PARTITION BY r.level_id
-            ORDER BY r.frame_count) as rank,
-        u.name as user_name,
+            ORDER BY r.frame_count) AS rank,
+        u.name AS user_name,
         r.level_id,
         r.frame_count,
         r.timestamp
-    FROM Users as u
-    JOIN PersonalBests as r ON r.user_id = u.id
+    FROM Users AS u
+    JOIN PersonalBests AS r ON r.user_id = u.id
     ORDER BY r.timestamp DESC
 )
 WHERE timestamp > strftime('%s', 'now') - 60 * 60 * 24 * 7
-AND rank <= 10"""
+AND rank <= 10
+"""
 
 LEVEL_TOP_50 = """
 SELECT
-    rank() OVER (ORDER BY r.frame_count) as rank,
+    rank() OVER (ORDER BY r.frame_count) AS rank,
     u.name,
     r.frame_count,
     r.timestamp
@@ -69,6 +70,7 @@ FROM Users u
 JOIN PersonalBests r ON u.id = r.user_id
 WHERE r.level_id = ?
 ORDER BY r.frame_count
-LIMIT 50"""
+LIMIT 50
+"""
 
 LEVEL_NAME = "SELECT l.name FROM Levels l WHERE l.id = ?"
