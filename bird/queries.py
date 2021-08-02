@@ -48,7 +48,8 @@ SELECT * FROM (
         rank() OVER (
             PARTITION BY r.level_id
             ORDER BY r.frame_count) AS rank,
-        u.name AS user_name,
+        u.id,
+        u.name,
         r.level_id,
         r.frame_count,
         r.timestamp
@@ -63,6 +64,7 @@ AND rank <= 10
 LEVEL_TOP_50 = """
 SELECT
     rank() OVER (ORDER BY r.frame_count) AS rank,
+    u.id,
     u.name,
     r.frame_count,
     r.timestamp

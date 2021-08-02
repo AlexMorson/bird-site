@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import render_level %}
+{% from "macros.html" import render_level, render_user %}
 
 {% block id %}recent-top-10{% endblock %}
 
@@ -20,7 +20,7 @@
             {% for replay in replays %}
                 <tr>
                     <td data-label="Rank">{{ replay.rank }}</td>
-                    <td data-label="Player">{{ replay.player }}</td>
+                    <td data-label="Player">{{ render_user(replay.user) }}</td>
                     <td data-label="Level">{{ render_level(replay.level) }}</td>
                     <td data-label="Time">{{ replay.time }}</td>
                     <td data-label="Date">{{ replay.date }}</td>
