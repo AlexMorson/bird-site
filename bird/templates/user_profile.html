@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_level %}
+
+{% block id %}user-profile{% endblock %}
+
+{% block title %}{{ user_name }}{% endblock %}
+
+{% macro render_column(all_birds) %}
+    {% set offset = 1 if all_birds else 0 %}
+    {% for hub, sub_hubs in hubs.items() %}
+        <h2>{{ hub }}</h2>
+        {% if sub_hubs is mapping %}
+            {% for sub_hub, levels in sub_hubs.items() %}
+                <div class="hub">
+                    <h3>{{ sub_hub }}</h3>
+                    {{ render_levels(levels, offset) }}
+                </div>
+            {% endfor %}
+        {% else %}
+            {{ render_levels(sub_hubs, offset) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_levels(levels, offset) %}
+    <table>
+        {% for level in levels %}
+            <tr>
+                {% if (level[0] + offset) in replays %}
+                    <td class="align-right">{{ replays[level[0] + offset].rank }}.</td>
+                    <td>{{ render_level(level) }}</td>
+                    <td class="align-right">{{ replays[level[0] + offset].time }}</td>
+                    <td>{{ replays[level[0] + offset].date }}</td>
+                {% else %}
+                    <td class="align-right">??.</td>
+                    <td>{{ render_level(level) }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{% block content %}
+    <div class="wrap">
+        <div>
+            <h1 class="collapse-top">Best Time</h1>
+            {{ render_column(False) }}
+        </div>
+        <div>
+            <h1 class="collapse-top">All Birds</h1>
+            {{ render_column(True) }}
+        </div>
+    </div>
+{% endblock %}

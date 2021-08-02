@@ -5,7 +5,7 @@ from flask import render_template, abort
 from bird import app
 from bird.db import get_db_cursor
 from bird.levels import LEVELS, HUBS
-from bird.queries import RECENT_TOP_10, LEVEL_TOP_50
+from bird.queries import RECENT_TOP_10, LEVEL_TOP_50, USER_NAME, USER_PROFILE
 
 
 @app.route("/")
@@ -64,6 +64,27 @@ def fetch_level_top_50(level_id):
             "date": format_timestamp(timestamp, now)
         })
     return replays
+
+
+@app.route("/player/<int:user_id>")
+def user_profile(user_id):
+    c = get_db_cursor()
+    c.execute(USER_NAME,  (user_id,))
+    results = c.fetchone()
+    if results is None:
+        return abort(404)
+    user_name = results[0]
+
+    c.execute(USER_PROFILE, (user_id,))
+    replays = {}
+    now = time.time()
+    for rank, level_id, frame_count, timestamp in c.fetchall():
+        replays[level_id] = {
+            "rank": rank,
+            "time": format_frame_count(frame_count),
+            "date": format_timestamp(timestamp, now)
+        }
+    return render_template("user_profile.html", user_name=user_name, replays=replays, hubs=HUBS)
 
 
 def format_frame_count(frame_count):

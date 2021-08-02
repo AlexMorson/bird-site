@@ -73,4 +73,22 @@ ORDER BY r.frame_count
 LIMIT 50
 """
 
+USER_PROFILE = """
+SELECT rank, level_id, frame_count, timestamp
+FROM (
+    SELECT
+        rank() OVER (
+            PARTITION BY r.level_id
+            ORDER BY r.frame_count) AS rank,
+        r.user_id,
+        r.level_id,
+        r.frame_count,
+        r.timestamp
+    FROM PersonalBests AS r
+)
+WHERE user_id = ?
+ORDER BY level_id
+"""
+
+USER_NAME = "SELECT u.name FROM Users u WHERE u.id = ?"
 LEVEL_NAME = "SELECT l.name FROM Levels l WHERE l.id = ?"
