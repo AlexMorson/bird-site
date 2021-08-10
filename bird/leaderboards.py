@@ -1,3 +1,4 @@
+import collections
 import datetime
 import sqlite3
 import threading
@@ -64,17 +65,18 @@ class LeaderboardReader(threading.Thread):
         return responses
 
     def _update_database(self, values):
-        users = []
+        users = collections.defaultdict(lambda: (0, ""))
         replays = []
         for level_id, scores in values.items():
             for score in scores:
                 user_name, replay = unquote(score["extra_data"]).split(";")[:2]
                 frame_count = score["sort"]
                 user_id = score["guest"]
-                timestamp = score["stored_timestamp"]
-                users.append((user_id, user_name))
+                timestamp = int(score["stored_timestamp"])
+                if users[user_id][0] < timestamp:
+                    users[user_id] = (timestamp, user_name)
                 replays.append((level_id, user_id, timestamp, frame_count, replay))
-        self.c.executemany(INSERT_USER, users)
+        self.c.executemany(INSERT_USER, [(user_id, user_name) for user_id, (timestamp, user_name) in users.items()])
         self.c.executemany(INSERT_REPLAY, replays)
         self.c.execute(UPDATE_PERSONAL_BESTS)
         self.conn.commit()
