@@ -1,3 +1,5 @@
+JOURNAL_MODE = "PRAGMA journal_mode = wal"
+
 CREATE_TABLES = """
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS Users(

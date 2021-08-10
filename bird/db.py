@@ -3,11 +3,13 @@ import sqlite3
 from flask import g
 
 from bird import app
+from bird.queries import JOURNAL_MODE
 
 
 def get_db():
     if "conn" not in g:
         g.conn = sqlite3.connect("leaderboards.sqlite")
+        g.conn.execute(JOURNAL_MODE)
     return g.conn
 
 
