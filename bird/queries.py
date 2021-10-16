@@ -96,3 +96,77 @@ ORDER BY level_id
 
 USER_NAME = "SELECT u.name FROM Users u WHERE u.id = ?"
 LEVEL_NAME = "SELECT l.name FROM Levels l WHERE l.id = ?"
+
+BEST_TIME_RANKINGS = """
+SELECT
+    user_id,
+    user_name,
+    sum(rank) + 101 * (63 - count(level_id)) - 63 AS score
+FROM (
+    SELECT
+        rank() OVER (
+            PARTITION BY r.level_id
+            ORDER BY r.frame_count) AS rank,
+        r.user_id,
+        u.name AS user_name,
+        r.level_id,
+        r.frame_count,
+        r.timestamp
+    FROM Users AS u
+    JOIN PersonalBests AS r ON r.user_id = u.id
+    WHERE r.level_id % 2 = 0
+    ORDER BY r.timestamp DESC
+)
+WHERE rank <= 100
+GROUP BY user_id
+ORDER BY score
+"""
+
+ALL_BIRDS_RANKINGS = """
+SELECT
+    user_id,
+    user_name,
+    sum(rank) + 101 * (63 - count(level_id)) - 63 AS score
+FROM (
+    SELECT
+        rank() OVER (
+            PARTITION BY r.level_id
+            ORDER BY r.frame_count) AS rank,
+        r.user_id,
+        u.name AS user_name,
+        r.level_id,
+        r.frame_count,
+        r.timestamp
+    FROM Users AS u
+    JOIN PersonalBests AS r ON r.user_id = u.id
+    WHERE r.level_id % 2 = 1
+    ORDER BY r.timestamp DESC
+)
+WHERE rank <= 100
+GROUP BY user_id
+ORDER BY score
+"""
+
+COMBINED_RANKINGS = """
+SELECT
+    user_id,
+    user_name,
+    sum(rank) + 101 * (126 - count(level_id)) - 126 AS score
+FROM (
+    SELECT
+        rank() OVER (
+            PARTITION BY r.level_id
+            ORDER BY r.frame_count) AS rank,
+        r.user_id,
+        u.name AS user_name,
+        r.level_id,
+        r.frame_count,
+        r.timestamp
+    FROM Users AS u
+    JOIN PersonalBests AS r ON r.user_id = u.id
+    ORDER BY r.timestamp DESC
+)
+WHERE rank <= 100
+GROUP BY user_id
+ORDER BY score
+"""

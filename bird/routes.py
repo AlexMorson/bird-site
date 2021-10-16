@@ -2,7 +2,7 @@ import time
 
 from flask import render_template, abort
 
-from bird import app
+from bird.wsgi import app
 from bird.db import get_db_cursor
 from bird.levels import LEVELS, HUBS
 from bird.queries import RECENT_TOP_10, LEVEL_TOP_50, USER_NAME, USER_PROFILE
@@ -69,7 +69,7 @@ def fetch_level_top_50(level_id):
 @app.route("/player/<int:user_id>")
 def user_profile(user_id):
     c = get_db_cursor()
-    c.execute(USER_NAME,  (user_id,))
+    c.execute(USER_NAME, (user_id,))
     results = c.fetchone()
     if results is None:
         return abort(404)

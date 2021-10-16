@@ -1,82 +1,101 @@
+import asyncio
 import collections
-import datetime
-import sqlite3
-import threading
+import logging
 import time
+from typing import Optional
 from urllib.parse import unquote
 
+import aiosqlite
+
 from bird import gamejolt
+from bird.gamejolt import Score
 from bird.levels import LEVELS
 from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY, UPDATE_PERSONAL_BESTS, JOURNAL_MODE
 
+logger = logging.getLogger(__name__)
 
-class LeaderboardReader(threading.Thread):
-    def __init__(self, private_key):
-        super().__init__()
+
+class Leaderboards:
+    def __init__(self, private_key: str):
         self.gamejolt = gamejolt.GameJolt(private_key)
-        self.conn = None
-        self.c = None
 
-    def run(self):
-        self._init_database()
-        self._update_every_hour()
+    @staticmethod
+    async def initialise():
+        logger.info("Initialising the database.")
+        async with aiosqlite.connect("leaderboards.sqlite") as db:
+            await db.execute(JOURNAL_MODE)
+            await db.executescript(CREATE_TABLES)
+            await db.executemany(INSERT_LEVEL, LEVELS.items())
+            await db.commit()
 
-    def _init_database(self):
-        self.conn = sqlite3.connect("leaderboards.sqlite")
-        self.conn.execute(JOURNAL_MODE)
-        self.c = self.conn.cursor()
-
-        self.c.executescript(CREATE_TABLES)
-        self.c.executemany(INSERT_LEVEL, LEVELS.items())
-        self.conn.commit()
-
-    def _update_every_hour(self):
-        while True:
-            now = datetime.datetime.now()
-            next_hour = now.replace(microsecond=0, second=0, minute=0) + datetime.timedelta(hours=1)
-            seconds_to_wait = (next_hour - now).total_seconds()
-            time.sleep(seconds_to_wait)
-            self._update()
-
-    def _update(self):
-        print("Updating...")
+    async def update(self):
         start = time.time()
-        leaderboards = self._read_leaderboards()
+
+        logger.info("Reading leaderboards.")
+        leaderboards = await self._read_leaderboards()
         if leaderboards is None:
-            print("Could not read leaderboards")
+            logger.warning("Could not read leaderboards.")
             return
-        values = {level_id: response["scores"] for
-                  level_id, response in zip(LEVELS, leaderboards) if
-                  response["success"] == "true"}
-        self._update_database(values)
+
+        logging.info("Updating database.")
+        await self._update_database(leaderboards)
+
         end = time.time()
-        print(f"Update took: {end - start:.1f}s")
+        logger.info(f"Update took: {end - start:.1f}s")
 
-    def _read_leaderboards(self):
+    async def _read_leaderboards(self) -> Optional[dict[int, list[Score]]]:
         level_ids = [level_id for level_id, name in LEVELS.items() if "Any%" in name or "100%" in name]
-        batch_size = 32  # Fits everything into 4 requests
-        level_id_groups = [level_ids[i:i + batch_size] for i in range(0, len(level_ids), batch_size)]
-        responses = []
-        for level_id_group in level_id_groups:
-            data = self.gamejolt.batch_fetch_url(level_id_group, 100)
-            if data is None:
-                return
-            responses.extend(data["responses"])
-        return responses
+        all_scores = await self.gamejolt.get_scores(level_ids, 100)
+        return {level_id: scores for level_id, scores in zip(LEVELS, all_scores)}
 
-    def _update_database(self, values):
+    @staticmethod
+    async def _update_database(leaderboards: dict[int, list[Score]]):
         users = collections.defaultdict(lambda: (0, ""))
         replays = []
-        for level_id, scores in values.items():
+        for level_id, scores in leaderboards.items():
             for score in scores:
-                user_name, replay = unquote(score["extra_data"]).split(";")[:2]
-                frame_count = score["sort"]
-                user_id = score["guest"]
-                timestamp = int(score["stored_timestamp"])
+                user_name, replay = unquote(score.extra_data).split(";")[:2]
+                frame_count = score.sort
+                user_id = score.guest
+                timestamp = score.stored_timestamp
                 if users[user_id][0] < timestamp:
                     users[user_id] = (timestamp, user_name)
                 replays.append((level_id, user_id, timestamp, frame_count, replay))
-        self.c.executemany(INSERT_USER, [(user_id, user_name) for user_id, (timestamp, user_name) in users.items()])
-        self.c.executemany(INSERT_REPLAY, replays)
-        self.c.execute(UPDATE_PERSONAL_BESTS)
-        self.conn.commit()
+
+        async with aiosqlite.connect("leaderboards.sqlite") as db:
+            await db.executemany(INSERT_USER,
+                                 [(user_id, user_name) for user_id, (timestamp, user_name) in users.items()])
+            await db.executemany(INSERT_REPLAY, replays)
+            await db.execute(UPDATE_PERSONAL_BESTS)
+            await db.commit()
+
+
+def main():
+    import argparse
+    import os
+
+    logging.basicConfig(level=logging.INFO)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--init", help="Initialise the database", action="store_true")
+    parser.add_argument("-u", "--update", help="Update the leaderboards", action="store_true")
+    args = parser.parse_args()
+
+    if not args.init and not args.update:
+        parser.print_help()
+        return
+
+    if args.init:
+        asyncio.run(Leaderboards.initialise())
+
+    if args.update:
+        private_key = os.environ.get("PRIVATE_KEY")
+        if private_key is None:
+            logger.error("No private key provided")
+            return
+        lb = Leaderboards(private_key)
+        asyncio.run(lb.update())
+
+
+if __name__ == "__main__":
+    main()

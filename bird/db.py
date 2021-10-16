@@ -2,7 +2,7 @@ import sqlite3
 
 from flask import g
 
-from bird import app
+from bird.wsgi import app
 from bird.queries import JOURNAL_MODE
 
 
