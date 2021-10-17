@@ -37,7 +37,7 @@ class Leaderboards:
             logger.warning("Could not read leaderboards.")
             return
 
-        logging.info("Updating database.")
+        logger.info("Updating database.")
         await self._update_database(leaderboards)
 
         end = time.time()
