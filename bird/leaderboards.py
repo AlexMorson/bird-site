@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import logging
+import sys
 import time
 from typing import Optional
 from urllib.parse import unquote
@@ -32,21 +33,23 @@ class Leaderboards:
         start = time.time()
 
         logger.info("Reading leaderboards.")
-        leaderboards = await self._read_leaderboards()
-        if leaderboards is None:
+        all_scores = await self._read_leaderboards()
+        if all_scores is None:
             logger.warning("Could not read leaderboards.")
-            return
+            return False
 
         logger.info("Updating database.")
+        leaderboards = {level_id: scores for level_id, scores in zip(LEVELS, all_scores)}
         await self._update_database(leaderboards)
 
         end = time.time()
         logger.info(f"Update took: {end - start:.1f}s")
 
+        return True
+
     async def _read_leaderboards(self) -> Optional[dict[int, list[Score]]]:
         level_ids = [level_id for level_id, name in LEVELS.items() if "Any%" in name or "100%" in name]
-        all_scores = await self.gamejolt.get_scores(level_ids, 100)
-        return {level_id: scores for level_id, scores in zip(LEVELS, all_scores)}
+        return await self.gamejolt.get_scores(level_ids, 100)
 
     @staticmethod
     async def _update_database(leaderboards: dict[int, list[Score]]):
@@ -94,7 +97,8 @@ def main():
             logger.error("No private key provided")
             return
         lb = Leaderboards(private_key)
-        asyncio.run(lb.update())
+        if not asyncio.run(lb.update()):
+            sys.exit(1)
 
 
 if __name__ == "__main__":
