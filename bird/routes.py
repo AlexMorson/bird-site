@@ -2,10 +2,15 @@ import time
 
 from flask import render_template, abort
 
-from bird.wsgi import app
 from bird.db import get_db_cursor
 from bird.levels import LEVELS, HUBS
-from bird.queries import RECENT_TOP_10, LEVEL_TOP_50, USER_NAME, USER_PROFILE
+from bird.queries import (
+    RECENT_TOP_10,
+    LEVEL_TOP_100,
+    USER_NAME,
+    USER_PROFILE
+)
+from bird.wsgi import app
 
 
 @app.route("/")
@@ -40,8 +45,8 @@ def level_leaderboard(level_id):
     best_time_id = 2 * (level_id // 2)
     all_birds_id = best_time_id + 1
 
-    best_time_replays = fetch_level_top_50(best_time_id)
-    all_birds_replays = fetch_level_top_50(all_birds_id)
+    best_time_replays = fetch_level_top_100(best_time_id)
+    all_birds_replays = fetch_level_top_100(all_birds_id)
 
     replays = {
         "best_time": best_time_replays,
@@ -51,9 +56,9 @@ def level_leaderboard(level_id):
     return render_template("level_leaderboard.html", level=level_name, replays=replays)
 
 
-def fetch_level_top_50(level_id):
+def fetch_level_top_100(level_id):
     c = get_db_cursor()
-    c.execute(LEVEL_TOP_50, (level_id,))
+    c.execute(LEVEL_TOP_100, (level_id,))
     replays = []
     now = time.time()
     for rank, user_id, user_name, frame_count, timestamp in c.fetchall():

@@ -63,7 +63,7 @@ WHERE timestamp > strftime('%s', 'now') - 60 * 60 * 24 * 7
 AND rank <= 10
 """
 
-LEVEL_TOP_50 = """
+LEVEL_TOP_100 = """
 SELECT
     rank() OVER (ORDER BY r.frame_count) AS rank,
     u.id,
@@ -74,7 +74,7 @@ FROM Users u
 JOIN PersonalBests r ON u.id = r.user_id
 WHERE r.level_id = ?
 ORDER BY r.frame_count
-LIMIT 50
+LIMIT 100
 """
 
 USER_PROFILE = """
