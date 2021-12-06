@@ -15,6 +15,8 @@ from bird.wsgi import app
 
 @app.route("/")
 def recent_top_10():
+    start_time = time.time()
+
     c = get_db_cursor()
     c.execute(RECENT_TOP_10)
     replays = []
@@ -27,7 +29,14 @@ def recent_top_10():
             "time": format_frame_count(frame_count),
             "date": format_timestamp(timestamp, now)
         })
-    return render_template("recent_top_10.html", replays=replays)
+
+    query_time = time.time() - start_time
+
+    return render_template(
+        "recent_top_10.html",
+        replays=replays,
+        query_time=query_time
+    )
 
 
 @app.route("/hubs")
@@ -37,6 +46,8 @@ def hubs():
 
 @app.route("/level/<int:level_id>")
 def level_leaderboard(level_id):
+    start_time = time.time()
+
     if level_id not in LEVELS:
         return abort(404)
     level_name = LEVELS[level_id].split(" - ")[0]
@@ -53,7 +64,14 @@ def level_leaderboard(level_id):
         "all_birds": all_birds_replays,
     }
 
-    return render_template("level_leaderboard.html", level=level_name, replays=replays)
+    query_time = time.time() - start_time
+
+    return render_template(
+        "level_leaderboard.html",
+        level=level_name,
+        replays=replays,
+        query_time=query_time
+    )
 
 
 def fetch_level_top_100(level_id):
@@ -73,6 +91,8 @@ def fetch_level_top_100(level_id):
 
 @app.route("/player/<int:user_id>")
 def user_profile(user_id):
+    start_time = time.time()
+
     c = get_db_cursor()
     c.execute(USER_NAME, (user_id,))
     results = c.fetchone()
@@ -89,7 +109,16 @@ def user_profile(user_id):
             "time": format_frame_count(frame_count),
             "date": format_timestamp(timestamp, now)
         }
-    return render_template("user_profile.html", user_name=user_name, replays=replays, hubs=HUBS)
+
+    query_time = time.time() - start_time
+
+    return render_template(
+        "user_profile.html",
+        user_name=user_name,
+        replays=replays,
+        hubs=HUBS,
+        query_time=query_time
+    )
 
 
 def format_frame_count(frame_count):

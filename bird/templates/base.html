@@ -13,5 +13,10 @@
     </nav>
     <h1>{{ self.title() }}</h1>
     {% block content %}{% endblock %}
+    {% if query_time %}
+        <footer>
+            <p class="align-right">Database took {{ (1000 * query_time) | round(1) }}ms</p>
+        </footer>
+    {% endif %}
 </body>
 </html>
