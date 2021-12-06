@@ -99,6 +99,7 @@ LEVEL_NAME = "SELECT l.name FROM Levels l WHERE l.id = ?"
 
 BEST_TIME_RANKINGS = """
 SELECT
+    rank() OVER (ORDER BY sum(rank) + 101 * (63 - count(level_id)) - 63),
     user_id,
     user_name,
     sum(rank) + 101 * (63 - count(level_id)) - 63 AS score
@@ -120,10 +121,12 @@ FROM (
 WHERE rank <= 100
 GROUP BY user_id
 ORDER BY score
+LIMIT 100
 """
 
 ALL_BIRDS_RANKINGS = """
 SELECT
+    rank() OVER (ORDER BY sum(rank) + 101 * (63 - count(level_id)) - 63),
     user_id,
     user_name,
     sum(rank) + 101 * (63 - count(level_id)) - 63 AS score
@@ -145,10 +148,12 @@ FROM (
 WHERE rank <= 100
 GROUP BY user_id
 ORDER BY score
+LIMIT 100
 """
 
 COMBINED_RANKINGS = """
 SELECT
+    rank() OVER (ORDER BY sum(rank) + 101 * (126 - count(level_id)) - 126),
     user_id,
     user_name,
     sum(rank) + 101 * (126 - count(level_id)) - 126 AS score
@@ -169,4 +174,5 @@ FROM (
 WHERE rank <= 100
 GROUP BY user_id
 ORDER BY score
+LIMIT 100
 """

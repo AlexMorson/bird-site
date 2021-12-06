@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TasBird{% endblock %}</title>
+    <title>{% block title %}Birb{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}"/>
 </head>
 <body id="{% block id %}{% endblock %}">
     <nav>
-        <a href="/">Recent Top 10s</a><a href="/hubs">Hubs</a>
+        <a href="/">Recent Top 10s</a>
+        <a href="/hubs">Hubs</a>
+        <a href="/rankings">Rankings</a>
     </nav>
     <h1>{{ self.title() }}</h1>
     {% block content %}{% endblock %}

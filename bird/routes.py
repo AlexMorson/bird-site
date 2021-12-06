@@ -8,7 +8,10 @@ from bird.queries import (
     RECENT_TOP_10,
     LEVEL_TOP_100,
     USER_NAME,
-    USER_PROFILE
+    USER_PROFILE,
+    BEST_TIME_RANKINGS,
+    ALL_BIRDS_RANKINGS,
+    COMBINED_RANKINGS
 )
 from bird.wsgi import app
 
@@ -156,3 +159,36 @@ def format_timestamp(timestamp, now):
         return plural(delta // 60 // 60 // 24 // 30, "month")
     else:
         return plural(delta // 60 // 60 // 24 // 365, "year")
+
+
+@app.route("/rankings")
+def rankings():
+    start_time = time.time()
+
+    c = get_db_cursor()
+
+    def get_rankings(query):
+        results = []
+        c.execute(query)
+        for rank, user_id, user_name, points in c.fetchall():
+            results.append({
+                "rank": rank,
+                "user": (user_id, user_name),
+                "points": points
+            })
+        return results
+
+    # FIXME: *Surely* there's a more efficient way to do this
+    best_time_rankings = get_rankings(BEST_TIME_RANKINGS)
+    all_birds_rankings = get_rankings(ALL_BIRDS_RANKINGS)
+    combined_rankings = get_rankings(COMBINED_RANKINGS)
+
+    query_time = time.time() - start_time
+
+    return render_template(
+        "rankings.html",
+        best_time_rankings=best_time_rankings,
+        all_birds_rankings=all_birds_rankings,
+        combined_rankings=combined_rankings,
+        query_time=query_time
+    )

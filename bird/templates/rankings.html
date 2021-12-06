@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_user %}
+
+{% block id %}rankings{% endblock %}
+
+{% block title %}Rankings{% endblock %}
+
+{% macro render_rankings(rankings) %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ranking in rankings %}
+                <tr>
+                    <td data-label="Rank">{{ ranking.rank }}</td>
+                    <td data-label="Player">{{ render_user(ranking.user) }}</td>
+                    <td data-label="Points">{{ ranking.points }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block content %}
+    <div class="wrap collapse-left">
+        <div>
+            <h2 class="collapse-top">Best Time</h2>
+            {{ render_rankings(best_time_rankings) }}
+        </div>
+        <div>
+            <h2 class="collapse-top">All Birds</h2>
+            {{ render_rankings(all_birds_rankings) }}
+        </div>
+        <div>
+            <h2 class="collapse-top">Combined</h2>
+            {{ render_rankings(combined_rankings) }}
+        </div>
+    </div>
+{% endblock %}
