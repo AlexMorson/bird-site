@@ -26,12 +26,29 @@ CREATE TABLE IF NOT EXISTS PersonalBests(
     replay TEXT,
     PRIMARY KEY(level_id, user_id)
 );
+CREATE TRIGGER IF NOT EXISTS update_personal_bests
+AFTER INSERT ON Replays
+BEGIN
+    INSERT INTO PersonalBests
+    VALUES (
+        NEW.level_id,
+        NEW.user_id,
+        NEW.timestamp,
+        NEW.frame_count,
+        NEW.replay
+    )
+    ON CONFLICT(level_id, user_id) DO UPDATE SET
+        timestamp = excluded.timestamp,
+        frame_count = excluded.frame_count,
+        replay = excluded.replay
+    WHERE excluded.timestamp > timestamp;
+END;
 CREATE INDEX IF NOT EXISTS pb_idx ON PersonalBests(level_id, frame_count, timestamp, user_id);
 """
 
-INSERT_LEVEL = "INSERT INTO Levels VALUES(?, ?) ON CONFLICT(id) DO NOTHING;"
-INSERT_USER = "INSERT INTO Users VALUES(?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name;"
-INSERT_REPLAY = "INSERT INTO Replays VALUES(?, ?, ?, ?, ?) ON CONFLICT(level_id, user_id, timestamp) DO NOTHING;"
+INSERT_LEVEL = "INSERT OR IGNORE INTO Levels VALUES(?, ?);"
+INSERT_USER = "INSERT OR REPLACE INTO Users VALUES(?, ?);"
+INSERT_REPLAY = "INSERT OR IGNORE INTO Replays VALUES(?, ?, ?, ?, ?);"
 
 UPDATE_PERSONAL_BESTS = """
 INSERT OR REPLACE INTO PersonalBests
@@ -116,7 +133,6 @@ FROM (
     FROM Users AS u
     JOIN PersonalBests AS r ON r.user_id = u.id
     WHERE r.level_id % 2 = 0
-    ORDER BY r.timestamp DESC
 )
 WHERE rank <= 100
 GROUP BY user_id
@@ -143,7 +159,6 @@ FROM (
     FROM Users AS u
     JOIN PersonalBests AS r ON r.user_id = u.id
     WHERE r.level_id % 2 = 1
-    ORDER BY r.timestamp DESC
 )
 WHERE rank <= 100
 GROUP BY user_id
@@ -169,7 +184,6 @@ FROM (
         r.timestamp
     FROM Users AS u
     JOIN PersonalBests AS r ON r.user_id = u.id
-    ORDER BY r.timestamp DESC
 )
 WHERE rank <= 100
 GROUP BY user_id

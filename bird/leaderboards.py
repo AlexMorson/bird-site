@@ -11,7 +11,7 @@ import aiosqlite
 from bird import gamejolt
 from bird.gamejolt import Score
 from bird.levels import LEVELS
-from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY, UPDATE_PERSONAL_BESTS, JOURNAL_MODE
+from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY, JOURNAL_MODE, UPDATE_PERSONAL_BESTS
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,13 @@ class Leaderboards:
             await db.execute(JOURNAL_MODE)
             await db.executescript(CREATE_TABLES)
             await db.executemany(INSERT_LEVEL, LEVELS.items())
+            await db.commit()
+
+    @staticmethod
+    async def fix():
+        logger.info("Recomputing personal bests.")
+        async with aiosqlite.connect("leaderboards.sqlite") as db:
+            await db.execute(UPDATE_PERSONAL_BESTS)
             await db.commit()
 
     async def update(self):
@@ -66,10 +73,11 @@ class Leaderboards:
                 replays.append((level_id, user_id, timestamp, frame_count, replay))
 
         async with aiosqlite.connect("leaderboards.sqlite") as db:
-            await db.executemany(INSERT_USER,
-                                 [(user_id, user_name) for user_id, (timestamp, user_name) in users.items()])
+            await db.executemany(
+                INSERT_USER,
+                [(user_id, user_name) for user_id, (timestamp, user_name) in users.items()]
+            )
             await db.executemany(INSERT_REPLAY, replays)
-            await db.execute(UPDATE_PERSONAL_BESTS)
             await db.commit()
 
 
@@ -81,15 +89,19 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--init", help="Initialise the database", action="store_true")
+    parser.add_argument("-f", "--fix", help="Recompute personal bests", action="store_true")
     parser.add_argument("-u", "--update", help="Update the leaderboards", action="store_true")
     args = parser.parse_args()
 
-    if not args.init and not args.update:
+    if not (args.init or args.fix or args.update):
         parser.print_help()
         return
 
     if args.init:
         asyncio.run(Leaderboards.initialise())
+
+    if args.fix:
+        asyncio.run(Leaderboards.fix())
 
     if args.update:
         private_key = os.environ.get("PRIVATE_KEY")
