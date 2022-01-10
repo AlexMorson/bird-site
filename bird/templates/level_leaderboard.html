@@ -5,38 +5,31 @@
 
 {% block title %}{{ level }}{% endblock %}
 
-{% macro render_leaderboard(replays) %}
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Player</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
+{% macro render_leaderboard(name, replays) %}
+    <div class="box">
+        <h2 class="leaderboard-name">{{ name }}</h2>
+        <div class="grid">
+            <div class="row header">
+                <p class="rank">#</p>
+                <p class="player">Player</p>
+                <p class="time">Time</p>
+                <p class="date">Date</p>
+            </div>
             {% for replay in replays %}
-                <tr>
-                    <td data-label="Rank">{{ replay.rank }}</td>
-                    <td data-label="Player">{{ render_user(replay.user) }}</td>
-                    <td data-label="Time">{{ replay.time }}</td>
-                    <td data-label="Date">{{ replay.date }}</td>
-                </tr>
+                <div class="row">
+                    <p class="rank">{{ replay.rank }}</p>
+                    <p class="player">{{ render_user(replay.user) }}</p>
+                    <p class="time">{{ replay.time }}</p>
+                    <p class="date">{{ replay.date }}</p>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+    </div>
 {% endmacro %}
 
 {% block content %}
-    <div class="wrap collapse-left">
-        <div>
-            <h2 class="collapse-top">Best Time</h2>
-            {{ render_leaderboard(replays.best_time) }}
-        </div>
-        <div>
-            <h2 class="collapse-top">All Birds</h2>
-            {{ render_leaderboard(replays.all_birds) }}
-        </div>
+    <div class="flow">
+        {{ render_leaderboard("Best Time", replays.best_time) }}
+        {{ render_leaderboard("All Birds", replays.all_birds) }}
     </div>
 {% endblock %}

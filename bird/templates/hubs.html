@@ -6,29 +6,33 @@
 {% block title %}Hubs{% endblock %}
 
 {% macro render_levels(levels) %}
-    <ul>
-        {% for level in levels %}
-            <li>{{ render_level(level) }}</li>
-        {% endfor %}
-    </ul>
+    {% for level in levels %}
+        <p class="level">{{ render_level(level) }}</p>
+    {% endfor %}
 {% endmacro %}
 
 {% block content %}
-    {% for hub, sub_hubs in hubs.items() %}
-        <h2>{{ hub }}</h2>
-        <div class="wrap">
-            {% if sub_hubs is mapping %}
-                {% for sub_hub, levels in sub_hubs.items() %}
-                    <div class="hub">
-                        <h3>{{ sub_hub }}</h3>
-                        {{ render_levels(levels) }}
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="hub">
-                    {{ render_levels(sub_hubs) }}
+    <div class="vertical-flow">
+        {% for hub, sub_hubs in hubs.items() %}
+            <div class="box">
+                <h2 class="hub-name">{{ hub }}</h2>
+                <div class="flow">
+                    {% if sub_hubs is mapping %}
+                        {% for sub_hub, levels in sub_hubs.items() %}
+                            <div>
+                                <h3 class="subhub-name">{{ sub_hub }}</h3>
+                                {{ render_levels(levels) }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="flow">
+                            <div>
+                                {{ render_levels(sub_hubs) }}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
-            {% endif %}
-        </div>
-    {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

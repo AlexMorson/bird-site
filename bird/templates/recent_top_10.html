@@ -6,26 +6,26 @@
 {% block title %}Recent Top 10s{% endblock %}
 
 {% block content %}
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Player</th>
-                <th>Level</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for replay in replays %}
-                <tr>
-                    <td data-label="Rank">{{ replay.rank }}</td>
-                    <td data-label="Player">{{ render_user(replay.user) }}</td>
-                    <td data-label="Level">{{ render_level(replay.level) }}</td>
-                    <td data-label="Time">{{ replay.time }}</td>
-                    <td data-label="Date">{{ replay.date }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="flow">
+        <div class="box">
+            <div class="grid">
+                <div class="row header">
+                    <p class="rank">#</p>
+                    <p class="player">Player</p>
+                    <p class="level">Level</p>
+                    <p class="time">Time</p>
+                    <p class="date">Date</p>
+                </div>
+                {% for replay in replays %}
+                    <div class="row">
+                        <p class="rank">{{ replay.rank }}</p>
+                        <p class="player">{{ render_user(replay.user) }}</p>
+                        <p class="level">{{ render_level(replay.level) }}</p>
+                        <p class="time">{{ replay.time }}</p>
+                        <p class="date">{{ replay.date }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

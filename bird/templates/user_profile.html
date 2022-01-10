@@ -5,50 +5,51 @@
 
 {% block title %}{{ user_name }}{% endblock %}
 
-{% macro render_column(all_birds) %}
-    {% set offset = 1 if all_birds else 0 %}
-    {% for hub, sub_hubs in hubs.items() %}
-        <h2>{{ hub }}</h2>
-        {% if sub_hubs is mapping %}
-            {% for sub_hub, levels in sub_hubs.items() %}
-                <div class="hub">
-                    <h3>{{ sub_hub }}</h3>
-                    {{ render_levels(levels, offset) }}
+{% macro render_column(name, all_birds) %}
+    <div class="box">
+        <h2 class="leaderboard-name">{{ name }}</h2>
+        <div class="vertical-flow">
+            {% set offset = 1 if all_birds else 0 %}
+            {% for hub, sub_hubs in hubs.items() %}
+                <div class="box">
+                    <h2 class="hub-name">{{ hub }}</h2>
+                    {% if sub_hubs is mapping %}
+                        {% for sub_hub, levels in sub_hubs.items() %}
+                            <h3 class="subhub-name">{{ sub_hub }}</h3>
+                            {{ render_levels(levels, offset) }}
+                        {% endfor %}
+                    {% else %}
+                        {{ render_levels(sub_hubs, offset) }}
+                    {% endif %}
                 </div>
             {% endfor %}
-        {% else %}
-            {{ render_levels(sub_hubs, offset) }}
-        {% endif %}
-    {% endfor %}
+        </div>
+    </div>
 {% endmacro %}
 
 {% macro render_levels(levels, offset) %}
-    <table>
+    <div class="grid">
         {% for level in levels %}
-            <tr>
+            <div class="row">
                 {% if (level[0] + offset) in replays %}
-                    <td class="align-right">{{ replays[level[0] + offset].rank }}.</td>
-                    <td>{{ render_level(level) }}</td>
-                    <td class="align-right">{{ replays[level[0] + offset].time }}</td>
-                    <td>{{ replays[level[0] + offset].date }}</td>
+                    <p class="rank">{{ replays[level[0] + offset].rank }}</p>
+                    <p class="level">{{ render_level(level) }}</p>
+                    <p class="time">{{ replays[level[0] + offset].time }}</p>
+                    <p class="date">{{ replays[level[0] + offset].date }}</p>
                 {% else %}
-                    <td class="align-right">??.</td>
-                    <td>{{ render_level(level) }}</td>
+                    <p class="rank">??</p>
+                    <p class="level">{{ render_level(level) }}</p>
+                    <p class="dummy"></p>
+                    <p class="dummy"></p>
                 {% endif %}
-            </tr>
+            </div>
         {% endfor %}
-    </table>
+    </div>
 {% endmacro %}
 
 {% block content %}
-    <div class="wrap">
-        <div>
-            <h1 class="collapse-top">Best Time</h1>
-            {{ render_column(False) }}
-        </div>
-        <div>
-            <h1 class="collapse-top">All Birds</h1>
-            {{ render_column(True) }}
-        </div>
+    <div class="flow">
+        {{ render_column("Best Time", False) }}
+        {{ render_column("All Birds", True) }}
     </div>
 {% endblock %}
