@@ -64,7 +64,7 @@ class GameJolt:
                 results = await asyncio.gather(*(self._get_scores(session, url) for url in urls))
             except (ClientError, ValidationError, GameJoltException):
                 logger.exception("Could not fetch scores.")
-                return
+                return None
 
         return sum(results, [])
 

@@ -1,8 +1,8 @@
 import asyncio
-import collections
 import logging
 import sys
 import time
+from collections import defaultdict
 from typing import Optional
 from urllib.parse import unquote
 
@@ -54,13 +54,13 @@ class Leaderboards:
 
         return True
 
-    async def _read_leaderboards(self) -> Optional[dict[int, list[Score]]]:
+    async def _read_leaderboards(self) -> Optional[list[list[Score]]]:
         level_ids = [level_id for level_id, name in LEVELS.items() if "Any%" in name or "100%" in name]
         return await self.gamejolt.get_scores(level_ids, 100)
 
     @staticmethod
     async def _update_database(leaderboards: dict[int, list[Score]]):
-        users = collections.defaultdict(lambda: (0, ""))
+        users: defaultdict[int, tuple[int, str]] = defaultdict(lambda: (0, ""))
         replays = []
         for level_id, scores in leaderboards.items():
             for score in scores:
