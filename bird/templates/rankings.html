@@ -8,20 +8,24 @@
 {% macro render_rankings(name, rankings) %}
     <div class="box">
         <h2 class="leaderboard-name">{{ name }}</h2>
-        <div class="grid">
-            <div class="row header">
-                <p class="rank">#</p>
-                <p class="player">Player</p>
-                <p class="points">Points</p>
-            </div>
-            {% for ranking in rankings %}
-                <div class="row">
-                    <p class="rank">{{ ranking.rank }}</p>
-                    <p class="player">{{ render_user(ranking.user) }}</p>
-                    <p class="points">{{ ranking.points }}</p>
-                </div>
-            {% endfor %}
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th class="player">Player</th>
+                    <th class="points">Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ranking in rankings %}
+                <tr>
+                    <td class="rank">{{ ranking.rank }}</td>
+                    <td class="player">{{ render_user(ranking.user) }}</td>
+                    <td class="points">{{ ranking.points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endmacro %}
 

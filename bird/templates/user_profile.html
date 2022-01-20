@@ -11,7 +11,7 @@
         <div class="vertical-flow">
             {% set offset = 1 if all_birds else 0 %}
             {% for hub, sub_hubs in hubs.items() %}
-                <div class="box">
+                <div class="box inner-box">
                     <h2 class="hub-name">{{ hub }}</h2>
                     {% if sub_hubs is mapping %}
                         {% for sub_hub, levels in sub_hubs.items() %}
@@ -28,23 +28,25 @@
 {% endmacro %}
 
 {% macro render_levels(levels, offset) %}
-    <div class="grid">
-        {% for level in levels %}
-            <div class="row">
+    <table>
+        <tbody>
+            {% for level in levels %}
+            <tr>
                 {% if (level[0] + offset) in replays %}
-                    <p class="rank">{{ replays[level[0] + offset].rank }}</p>
-                    <p class="level">{{ render_level(level) }}</p>
-                    <p class="time">{{ replays[level[0] + offset].time }}</p>
-                    <p class="date">{{ replays[level[0] + offset].date }}</p>
+                <td class="rank">{{ replays[level[0] + offset].rank }}</td>
+                <td class="level">{{ render_level(level) }}</td>
+                <td class="time">{{ replays[level[0] + offset].time }}</td>
+                <td class="date">{{ replays[level[0] + offset].date }}</td>
                 {% else %}
-                    <p class="rank">??</p>
-                    <p class="level">{{ render_level(level) }}</p>
-                    <p class="dummy"></p>
-                    <p class="dummy"></p>
+                <td class="rank">??</td>
+                <td class="level">{{ render_level(level) }}</td>
+                <td class="dummy"></td>
+                <td class="dummy"></td>
                 {% endif %}
-            </div>
-        {% endfor %}
-    </div>
+            </tr>
+            {% endfor %}
+        <tbody>
+    </table>
 {% endmacro %}
 
 {% block content %}

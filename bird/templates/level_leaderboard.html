@@ -8,22 +8,26 @@
 {% macro render_leaderboard(name, replays) %}
     <div class="box">
         <h2 class="leaderboard-name">{{ name }}</h2>
-        <div class="grid">
-            <div class="row header">
-                <p class="rank">#</p>
-                <p class="player">Player</p>
-                <p class="time">Time</p>
-                <p class="date">Date</p>
-            </div>
-            {% for replay in replays %}
-                <div class="row">
-                    <p class="rank">{{ replay.rank }}</p>
-                    <p class="player">{{ render_user(replay.user) }}</p>
-                    <p class="time">{{ replay.time }}</p>
-                    <p class="date">{{ replay.date }}</p>
-                </div>
-            {% endfor %}
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank">#</th>
+                    <th class="player">Player</th>
+                    <th class="time">Time</th>
+                    <th class="date">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for replay in replays %}
+                <tr>
+                    <td class="rank">{{ replay.rank }}</td>
+                    <td class="player">{{ render_user(replay.user) }}</td>
+                    <td class="time">{{ replay.time }}</td>
+                    <td class="date">{{ replay.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endmacro %}
 

@@ -6,26 +6,30 @@
 {% block title %}Recent Top 10s{% endblock %}
 
 {% block content %}
-    <div class="flow">
+    <div class="vertical-flow">
         <div class="box">
-            <div class="grid">
-                <div class="row header">
-                    <p class="rank">#</p>
-                    <p class="player">Player</p>
-                    <p class="level">Level</p>
-                    <p class="time">Time</p>
-                    <p class="date">Date</p>
-                </div>
-                {% for replay in replays %}
-                    <div class="row">
-                        <p class="rank">{{ replay.rank }}</p>
-                        <p class="player">{{ render_user(replay.user) }}</p>
-                        <p class="level">{{ render_level(replay.level) }}</p>
-                        <p class="time">{{ replay.time }}</p>
-                        <p class="date">{{ replay.date }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="rank" scope="col">#</th>
+                        <th class="player" scope="col">Player</th>
+                        <th class="level" scope="col">Level</th>
+                        <th class="time" scope="col">Time</th>
+                        <th class="date" scope="col">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for replay in replays %}
+                        <tr>
+                            <td class="rank">{{ replay.rank }}</td>
+                            <td class="player">{{ render_user(replay.user) }}</td>
+                            <td class="level">{{ render_level(replay.level) }}</td>
+                            <td class="time">{{ replay.time }}</td>
+                            <td class="date">{{ replay.date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock %}
