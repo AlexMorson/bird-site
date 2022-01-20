@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros.html" import render_user %}
+{% from "decorations.html" import underline %}
 
 {% block id %}level-leaderboard{% endblock %}
 
@@ -7,7 +8,8 @@
 
 {% macro render_leaderboard(name, replays) %}
     <div class="box">
-        <h2 class="leaderboard-name">{{ name }}</h2>
+        <h2 class="leaderboard-name header-with-underline">{{ name }}</h2>
+        {{ underline() }}
         <table>
             <thead>
                 <tr>

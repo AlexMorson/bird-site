@@ -1,0 +1,16 @@
+{% macro underline() %}
+    <div class="underline">
+        <img class="underline-cap-left" src={{ url_for('static', filename='underline-cap.svg') }} />
+        <img class="underline-middle" src={{ url_for('static', filename='underline-middle.svg') }} />
+        <img class="underline-cap-right" src={{ url_for('static', filename='underline-cap.svg') }} />
+    </div>
+{% endmacro %}
+
+{% macro header(title) %}
+    <header>
+        <img class="header-cap-left" src={{ url_for('static', filename='header-cap.svg') }} />
+        <h1 class="page-name">{{ title }}</h1>
+        <img class="header-cap-right" src={{ url_for('static', filename='header-cap.svg') }} />
+    </header>
+{% endmacro %}
+

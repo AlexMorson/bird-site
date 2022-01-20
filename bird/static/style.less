@@ -1,5 +1,6 @@
 @background: linear-gradient(to bottom, #add948, #51a546);
 @box-bg: #043a3d;
+@box-bg-lighten: lighten(@box-bg, 3%);
 @box-fg: whitesmoke;
 @title-bg: whitesmoke;
 @title-fg: black;
@@ -27,29 +28,8 @@ nav {
     text-decoration: none;
 
     &:hover {
-      background-color: lighten(@box-bg, 10%);
+      background-color: @box-bg-lighten;
     }
-  }
-}
-
-header {
-  font-weight: bold;
-  margin: 2rem 0;
-
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-
-  h1 {
-    background: @title-bg;
-    color: @title-fg;
-
-    display: inline;
-    flex-grow: 1; 
-    padding: 10px 20px;
-    margin: 0 50px;
-    white-space: nowrap;
-    border-radius: 6px;
   }
 }
 
@@ -76,7 +56,7 @@ header {
 .box {
   padding: 2rem;
   border-radius: 6px;
-  background-color: @box-bg;
+  background: @box-bg;
   color: @box-fg;
   a {
     color: @box-fg;
@@ -87,7 +67,10 @@ header {
   }
 
   &.inner-box {
-    padding: 0;
+    padding: 1rem;
+    background: @box-bg-lighten;
+  }
+  &.stretched {
     width: 100%;
   }
 }
@@ -110,7 +93,12 @@ table {
   tbody {
     tr {
       &:nth-child(even) {
-        background: linear-gradient(to right, @box-bg, lighten(@box-bg, 2%) 5%, lighten(@box-bg, 2%) 95%, @box-bg);
+        @bg: @box-bg-lighten;
+        background: linear-gradient(to right, fade(@bg, 0%), @bg 5%, @bg 95%, fade(@bg, 0%));
+      }
+      &:nth-child(odd) {
+        @bg: @box-bg;
+        background: linear-gradient(to right, fade(@bg, 0%), @bg 5%, @bg 95%, fade(@bg, 0%));
       }
     }
   }
@@ -150,13 +138,55 @@ table {
     justify-content: center;
     text-align: center;
   }
-
-  .vertical-flow {
-    align-items: stretch;
-  }
 }
 
 .database-time {
   text-align: right;
   padding-right: 1em;
+}
+
+// svg decorations
+
+.header-with-underline {
+  margin-bottom: 0;
+}
+
+.underline {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 20px;
+
+  .underline-middle {
+    flex-grow: 1;
+    height: 32px;
+  }
+  .underline-cap-right {
+    transform: rotate(180deg);
+  }
+}
+
+header {
+  font-weight: bold;
+  margin: 2rem;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: flex-start;
+
+  h1 {
+    background: @title-bg;
+    color: @title-fg;
+
+    display: inline;
+    flex-grow: 1; 
+    padding: 8px 20px;
+    height: 38px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .header-cap-right {
+    transform: scale(-1, 1);
+  }
 }

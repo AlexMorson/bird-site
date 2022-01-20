@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros.html" import render_level %}
+{% from "decorations.html" import underline %}
 
 {% block id %}hubs{% endblock %}
 
@@ -15,12 +16,14 @@
     <div class="vertical-flow">
         {% for hub, sub_hubs in hubs.items() %}
             <div class="box">
-                <h2 class="hub-name">{{ hub }}</h2>
+                <h2 class="hub-name header-with-underline">{{ hub }}</h2>
+                {{ underline() }}
                 <div class="flow">
                     {% if sub_hubs is mapping %}
                         {% for sub_hub, levels in sub_hubs.items() %}
-                            <div>
-                                <h3 class="subhub-name">{{ sub_hub }}</h3>
+                            <div class="box inner-box">
+                                <h3 class="subhub-name header-with-underline">{{ sub_hub }}</h3>
+                                {{ underline() }}
                                 {{ render_levels(levels) }}
                             </div>
                         {% endfor %}

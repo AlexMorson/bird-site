@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "macros.html" import render_level %}
+{% from "decorations.html" import underline %}
 
 {% block id %}user-profile{% endblock %}
 
@@ -7,12 +8,14 @@
 
 {% macro render_column(name, all_birds) %}
     <div class="box">
-        <h2 class="leaderboard-name">{{ name }}</h2>
+        <h2 class="leaderboard-name header-with-underline">{{ name }}</h2>
+        {{ underline() }}
         <div class="vertical-flow">
             {% set offset = 1 if all_birds else 0 %}
             {% for hub, sub_hubs in hubs.items() %}
-                <div class="box inner-box">
-                    <h2 class="hub-name">{{ hub }}</h2>
+                <div class="box inner-box stretched">
+                    <h2 class="hub-name header-with-underline">{{ hub }}</h2>
+                    {{ underline() }}
                     {% if sub_hubs is mapping %}
                         {% for sub_hub, levels in sub_hubs.items() %}
                             <h3 class="subhub-name">{{ sub_hub }}</h3>
