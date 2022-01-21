@@ -6,6 +6,8 @@
 
 {% block title %}Rankings{% endblock %}
 
+{% block background_url %}{{ url_for('static', filename='backgrounds/rankings.jpg') }}{% endblock %}
+
 {% macro render_rankings(name, rankings) %}
     <div class="box">
         <h2 class="leaderboard-name header-with-underline">{{ name }}</h2>

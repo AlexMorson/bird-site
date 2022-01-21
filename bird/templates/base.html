@@ -24,5 +24,11 @@
         <p class="database-time">Database took {{ (1000 * query_time) | round(1) }}ms</p>
     </footer>
     {% endif %}
+    {% if self.background_url() %}
+    <div 
+        class="background"
+        style="background-image: url('{% block background_url %}{% endblock %}');"
+    />
+    {% endif %}
 </body>
 </html>
