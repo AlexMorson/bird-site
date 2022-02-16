@@ -1,31 +1,37 @@
-@background: #f8fff1;
+@box-bg: #043a3d;
+@box-bg-lighten: lighten(@box-bg, 3%);
+@box-fg: whitesmoke;
+@title-bg: whitesmoke;
+@title-fg: black;
 
 body {
-  background-color: @background;
+  // it may take a moment before the background image is loaded,
+  // placeholder color so it doesn't flash white
+  background: lighten(@box-bg, 5%);
   font-family: sans-serif;
   margin: 0;
+  min-height: 100vh;
+}
+
+main {
+  padding: 0 20px;
 }
 
 nav {
   display: flex;
   width: 100%;
-  background: #cae8ac;
+  background: @box-bg;
 
   a {
     padding: 1em;
-    color: black;
+    color: @box-fg;
     font-weight: bold;
     text-decoration: none;
 
     &:hover {
-      background: @background;
+      background-color: @box-bg-lighten;
     }
   }
-}
-
-.database-time {
-  text-align: right;
-  padding-right: 1em;
 }
 
 .page-name, .leaderboard-name, .hub-name {
@@ -37,81 +43,91 @@ nav {
   flex-wrap: wrap;
   justify-content: center;
   align-items: start;
-  gap: 1rem;
+  gap: 2rem;
   padding: 0 0.2rem;
 }
 
 .vertical-flow {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0 0.2rem 0.2rem;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 2rem;
 }
 
 .box {
-  padding: 0.5rem;
-  border: 1px solid black;
-  border-radius: 0.5rem;
+  padding: 2rem;
+  border-radius: 6px;
+  background: @box-bg;
+  color: @box-fg;
+  a {
+    color: @box-fg;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &.inner-box {
+    padding: 1rem;
+    background: @box-bg-lighten;
+  }
+  &.stretched {
+    width: 100%;
+  }
 }
 
-.grid {
-  display: grid;
-  column-gap: 0.5rem;
-  row-gap: 0.5rem;
-}
-
-.row {
-  display: contents;
-}
-
-.header {
-  font-weight: bold;
-}
-
-.rank, .player, .time, .date, .level, .points, .dummy {
-  margin: 0;
-}
-
-.rank, .points {
-  justify-self: center;
-}
-
-.time {
-  justify-self: right;
-}
-
-.player, .level {
-  max-width: 15rem;
-  white-space: nowrap;
-  overflow: hidden;
+table {
+  border-collapse: collapse;
   width: 100%;
-}
 
-#level-leaderboard .grid {
-  grid-template-columns: max-content auto max-content max-content;
+  td, th {
+    padding: 10px 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width:  200px;
+  }
+
+  thead {
+    border-bottom: 2px solid white;
+  }
+  tbody {
+    tr {
+      &:nth-child(even) {
+        @bg: @box-bg-lighten;
+        background: linear-gradient(to right, fade(@bg, 0%), @bg 5%, @bg 95%, fade(@bg, 0%));
+      }
+      &:nth-child(odd) {
+        @bg: @box-bg;
+        background: linear-gradient(to right, fade(@bg, 0%), @bg 5%, @bg 95%, fade(@bg, 0%));
+      }
+    }
+  }
+
+  .rank {
+    text-align: left;
+    font-weight: bold;
+  }
+  .player {
+    text-align: left;
+  }
+  .level {
+    text-align: left;
+  }
+  .time {
+    text-align: center;
+  }
+  .date {
+    text-align: right;
+  }
 }
 
 #recent-top-10 {
-  .grid {
-    grid-template-columns: max-content auto max-content max-content max-content;
-  }
-
-  @media screen and (max-width: 500px) {
-    .grid {
-      grid-template-columns: max-content auto max-content;
-    }
+  @media screen and (max-width: 600px) {
     .time, .date {
       display: none;
     }
   }
-}
-
-#rankings .grid {
-  grid-template-columns: max-content auto max-content;
-}
-
-#user-profile .grid {
-  grid-template-columns: max-content auto max-content max-content;
 }
 
 #hubs {
@@ -123,8 +139,68 @@ nav {
     justify-content: center;
     text-align: center;
   }
+}
 
-  .vertical-flow {
-    align-items: center;
+.database-time {
+  text-align: right;
+  padding-right: 1em;
+}
+
+// decorations
+
+.background {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -100;
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.header-with-underline {
+  margin-bottom: 0;
+}
+
+.underline {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 20px;
+
+  .underline-middle {
+    flex-grow: 1;
+    height: 32px;
+  }
+  .underline-cap-right {
+    transform: rotate(180deg);
+  }
+}
+
+header {
+  font-weight: bold;
+  margin: 2rem;
+
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: flex-start;
+
+  h1 {
+    background: @title-bg;
+    color: @title-fg;
+
+    display: inline;
+    flex-grow: 1; 
+    padding: 8px 20px;
+    height: 38px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .header-cap-right {
+    transform: scale(-1, 1);
   }
 }

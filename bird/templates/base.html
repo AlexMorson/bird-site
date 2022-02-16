@@ -1,3 +1,5 @@
+{% from "decorations.html" import header %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +15,7 @@
         <a href="/hubs">Hubs</a>
         <a href="/rankings">Rankings</a>
     </nav>
-    <header>
-        <h1 class="page-name">{{ self.title() }}</h1>
-    </header>
+    {{ header(self.title()) }}
     <main>
         {% block content %}{% endblock %}
     </main>
@@ -23,6 +23,12 @@
     <footer>
         <p class="database-time">Database took {{ (1000 * query_time) | round(1) }}ms</p>
     </footer>
+    {% endif %}
+    {% if self.background_url() %}
+    <div 
+        class="background"
+        style="background-image: url('{% block background_url %}{% endblock %}');"
+    />
     {% endif %}
 </body>
 </html>
