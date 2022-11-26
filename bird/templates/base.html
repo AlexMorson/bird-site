@@ -6,8 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Birb{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+    {% if self.background_url() %}
+    <link rel="preload" as="image" href="{{ self.background_url() }}">
+    {% endif %}
 </head>
 <body id="{% block id %}{% endblock %}">
     <nav>
@@ -27,8 +30,8 @@
     {% if self.background_url() %}
     <div 
         class="background"
-        style="background-image: url('{% block background_url %}{% endblock %}');"
-    />
+        style="background-image: url('{{ self.background_url() }}');"
+    ></div>
     {% endif %}
 </body>
 </html>
