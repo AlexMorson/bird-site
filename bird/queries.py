@@ -18,6 +18,14 @@ CREATE TABLE IF NOT EXISTS Replays(
     replay TEXT,
     PRIMARY KEY(level_id, user_id, timestamp)
 );
+CREATE TABLE IF NOT EXISTS DeletedReplays(
+    level_id INTEGER REFERENCES Levels(id),
+    user_id INTEGER REFERENCES Users(id),
+    timestamp INTEGER,
+    frame_count INTEGER,
+    replay TEXT,
+    PRIMARY KEY(level_id, user_id, timestamp)
+);
 CREATE TABLE IF NOT EXISTS PersonalBests(
     level_id INTEGER REFERENCES Levels(id),
     user_id INTEGER REFERENCES Users(id),
@@ -51,14 +59,34 @@ INSERT_USER = "INSERT OR REPLACE INTO Users VALUES(?, ?);"
 INSERT_REPLAY = "INSERT OR IGNORE INTO Replays VALUES(?, ?, ?, ?, ?);"
 
 UPDATE_PERSONAL_BESTS = """
-INSERT OR REPLACE INTO PersonalBests
+DELETE FROM PersonalBests;
+INSERT INTO PersonalBests
 SELECT r.*
-FROM Replays r
+FROM Replays AS r
 JOIN (
     SELECT r.level_id, r.user_id, max(r.timestamp) AS timestamp
     FROM Replays AS r
     GROUP BY r.level_id, r.user_id
-) AS r2 ON r2.level_id = r.level_id AND r2.user_id = r.user_id AND r2.timestamp = r.timestamp;
+) AS r2
+ON r2.level_id = r.level_id
+AND r2.user_id = r.user_id
+AND r2.timestamp = r.timestamp;
+"""
+
+COPY_REPLAY_TO_DELETED = """
+INSERT INTO DeletedReplays
+SELECT r.*
+FROM Replays AS r
+WHERE r.level_id = :level_id
+AND r.user_id = :user_id
+AND r.timestamp = :timestamp
+"""
+
+DELETE_REPLAY = """
+DELETE FROM Replays AS r
+WHERE r.level_id = :level_id
+AND r.user_id = :user_id
+AND r.timestamp = :timestamp
 """
 
 RECENT_TOP_10 = """

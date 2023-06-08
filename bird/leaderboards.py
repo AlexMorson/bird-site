@@ -11,7 +11,16 @@ import aiosqlite
 from bird import gamejolt
 from bird.gamejolt import Score
 from bird.levels import LEVELS
-from bird.queries import CREATE_TABLES, INSERT_LEVEL, INSERT_USER, INSERT_REPLAY, JOURNAL_MODE, UPDATE_PERSONAL_BESTS
+from bird.queries import (
+    COPY_REPLAY_TO_DELETED,
+    CREATE_TABLES,
+    DELETE_REPLAY,
+    INSERT_LEVEL,
+    INSERT_USER,
+    INSERT_REPLAY,
+    JOURNAL_MODE,
+    UPDATE_PERSONAL_BESTS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +42,18 @@ class Leaderboards:
     async def fix():
         logger.info("Recomputing personal bests.")
         async with aiosqlite.connect("leaderboards.sqlite") as db:
-            await db.execute(UPDATE_PERSONAL_BESTS)
+            await db.executescript(UPDATE_PERSONAL_BESTS)
             await db.commit()
+
+    @staticmethod
+    async def delete(level_id: int, user_id: int, timestamp: int):
+        logger.info("Deleting replay.")
+        parameters = {"level_id": level_id, "user_id": user_id, "timestamp": timestamp}
+        async with aiosqlite.connect("leaderboards.sqlite") as db:
+            await db.execute(COPY_REPLAY_TO_DELETED, parameters)
+            await db.execute(DELETE_REPLAY, parameters)
+            await db.commit()
+        logger.warning("You may now need to fix the personal bests.")
 
     async def update(self):
         start = time.time()
@@ -81,37 +100,44 @@ class Leaderboards:
             await db.commit()
 
 
-def main():
+async def main():
     import argparse
     import os
 
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--init", help="Initialise the database", action="store_true")
-    parser.add_argument("-f", "--fix", help="Recompute personal bests", action="store_true")
-    parser.add_argument("-u", "--update", help="Update the leaderboards", action="store_true")
+    subparsers = parser.add_subparsers(required=True, dest="command")
+
+    subparsers.add_parser("init", help="Initialise the database")
+    subparsers.add_parser("fix", help="Recompute personal bests")
+    subparsers.add_parser("update", help="Update the leaderboards")
+
+    delete_parser = subparsers.add_parser("delete", help="Delete a replay")
+    delete_parser.add_argument("level_id", type=int)
+    delete_parser.add_argument("user_id", type=int)
+    delete_parser.add_argument("timestamp", type=int)
+
     args = parser.parse_args()
 
-    if not (args.init or args.fix or args.update):
-        parser.print_help()
-        return
+    if args.command == "init":
+        await Leaderboards.initialise()
 
-    if args.init:
-        asyncio.run(Leaderboards.initialise())
+    if args.command == "fix":
+        await Leaderboards.fix()
 
-    if args.fix:
-        asyncio.run(Leaderboards.fix())
-
-    if args.update:
+    if args.command == "update":
         private_key = os.environ.get("PRIVATE_KEY")
         if private_key is None:
             logger.error("No private key provided")
             return
         lb = Leaderboards(private_key)
-        if not asyncio.run(lb.update()):
+        if not await lb.update():
             sys.exit(1)
+
+    if args.command == "delete":
+        await Leaderboards.delete(args.level_id, args.user_id, args.timestamp)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
