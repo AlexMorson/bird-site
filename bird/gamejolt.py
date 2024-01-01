@@ -76,7 +76,7 @@ class GameJolt:
                 raise GameJoltException(f"{response.status} {response.reason}")
             data = await response.json()
 
-        responses = Response.parse_obj(data).response
+        responses = Response.model_validate(data).response
         if responses.success != "true":
             raise GameJoltException(f"Unsuccessful request. message='{responses.message}'")
 
