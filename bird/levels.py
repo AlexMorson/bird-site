@@ -40,11 +40,13 @@ LEVELS = {
     389479: "Wild Courtyards - 100%", 389480: "The Acropolis - Any%", 389481: "The Acropolis - 100%",
     389482: "Windmill Graveyard - Any%", 389483: "Windmill Graveyard - 100%", 389484: "Crumbling Wells - Any%",
     389485: "Crumbling Wells - 100%", 389486: "The Gorge - Any%", 389487: "The Gorge - 100%",
-    389488: "The Roosts - Any%", 389489: "The Roosts - 100%"
+    389488: "The Roosts - Any%", 389489: "The Roosts - 100%", 843789: "The Outer Forest - Any%",
+    843790: "The Outer Forest - 100%",
 }
 
 HUBS = {
     "Forest Kingdom": {
+        "The Outer Forest": [(843789, "The Outer Forest")],
         "Quiet Valley Woods": [(365694, "Twin Tree Village"), (365672, "Root Slides"), (365686, "Forest Edge"), (365668, "The Hollow")],
         "Cliffdrop Woods": [(365676, "Abandoned Market"), (365678, "Wild Orchard"), (365682, "Hidden Village"), (365688, "Thorny Grove")],
         "Dripping Vine Woods": [(365684, "High Canopy"), (365680, "Foggy Forest"), (365666, "Briar"), (365670, "The Grotto")],

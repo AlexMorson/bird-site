@@ -55,9 +55,13 @@ def level_leaderboard(level_id):
         return abort(404)
     level_name = LEVELS[level_id].split(" - ")[0]
 
-    # Even numbers are the best-time leaderboards
-    best_time_id = 2 * (level_id // 2)
-    all_birds_id = best_time_id + 1
+    # Except for The Outer Forest, even numbers are the best-time leaderboards
+    if level_id in (843789, 843790):
+        best_time_id = 843789
+        all_birds_id = 843790
+    else:
+        best_time_id = 2 * (level_id // 2)
+        all_birds_id = best_time_id + 1
 
     best_time_replays = fetch_level_top_100(best_time_id)
     all_birds_replays = fetch_level_top_100(all_birds_id)
