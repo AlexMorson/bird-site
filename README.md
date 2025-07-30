@@ -12,8 +12,6 @@ lessc bird/static/style.less bird/static/style.css
 ./bird/optimise-backgrounds.sh
 
 # Run debug server
-poetry install --no-root
-poetry shell
-python -m bird.leaderboards init
-flask --app bird.wsgi run --debug
+uv run -m bird.leaderboards init
+uv run flask --app bird.wsgi run --debug
 ```
